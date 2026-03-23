@@ -1,11 +1,500 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CIR Forum</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary:   #1a1a2e;
+      --accent:    #e94560;
+      --surface:   #f7f7fb;
+      --card:      #ffffff;
+      --muted:     #8b8fa8;
+      --border:    #e4e4ef;
+      --chat-bg:   #f0f0f8;
+      --radius:    12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--primary);
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: var(--primary);
+      padding: 0.9rem 1.5rem;
+      border-bottom: 3px solid var(--accent);
+    }
+    .navbar-brand {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      color: #fff !important;
+      letter-spacing: -0.5px;
+    }
+    .navbar-brand span { color: var(--accent); }
+
+    #btn-show-login {
+      background: transparent;
+      border: 1.5px solid rgba(255,255,255,0.4);
+      color: #fff;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      transition: all .2s;
+    }
+    #btn-show-login:hover { border-color: var(--accent); color: var(--accent); }
+
+    #nav-user-info { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+    #nav-username { color: var(--accent); font-weight: 600; }
+    #btn-logout {
+      background: none; border: none; color: var(--muted); font-size: 0.8rem;
+      text-decoration: underline; padding: 0; cursor: pointer; margin-left: 8px;
+    }
+
+    /* ── LOGIN MODAL ── */
+    .modal-content { border-radius: var(--radius); border: none; }
+    .modal-header { background: var(--primary); color: #fff; border-radius: var(--radius) var(--radius) 0 0; }
+    .modal-title { font-family: 'Syne', sans-serif; }
+    .btn-close-white { filter: invert(1); }
+    .btn-accent {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 8px; padding: 8px 20px; font-weight: 500;
+      transition: opacity .2s;
+    }
+    .btn-accent:hover { opacity: 0.85; color: #fff; }
+
+    /* ── LAYOUT ── */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+    }
+    @media (max-width: 900px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── LEFT COLUMN ── */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+    }
+
+    /* ── TOPIC LIST ── */
+    #topics-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .topic-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+    }
+    .topic-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(233,69,96,.08);
+      transform: translateY(-1px);
+    }
+    .topic-card.active { border-color: var(--accent); background: #fff8f9; }
+    .topic-card h6 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      margin: 0 0 4px;
+      color: var(--primary);
+    }
+    .topic-card .meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .topic-card .meta i { color: var(--accent); }
+
+    /* ── BTN NEW TOPIC ── */
+    #btn-new-topic {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 8px; padding: 8px 18px; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 6px;
+      margin-bottom: 1rem;
+      transition: opacity .2s;
+    }
+    #btn-new-topic:hover { opacity: 0.85; }
+
+    /* ── FORM NEW TOPIC ── */
+    #form-new-topic {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 1.2rem;
+      display: none;                 /* masqué par défaut — CDC S1 */
+    }
+    #form-new-topic h6 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+    .form-control {
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .form-control:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(233,69,96,.12);
+    }
+
+    /* ── TOPIC DETAIL ── */
+    #topic-detail {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-top: 1.2rem;
+      display: none;
+    }
+    #topic-detail h5 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+    }
+    #topic-detail .topic-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
+    #topic-detail .topic-body { font-size: 0.92rem; line-height: 1.65; color: #333; }
+
+    /* ── REPLIES ── */
+    #replies-section { margin-top: 1rem; }
+    #replies-section .reply-item {
+      border-left: 3px solid var(--border);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      border-radius: 0 8px 8px 0;
+      background: var(--surface);
+      font-size: 0.88rem;
+    }
+    #replies-section .reply-item .reply-author {
+      font-weight: 600; font-size: 0.8rem; color: var(--accent); margin-bottom: 3px;
+    }
+
+    /* ── FORM REPLY ── */
+    #form-reply {
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ── CHAT ── */
+    .chat-panel {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+      height: 520px;
+      position: sticky;
+      top: 1rem;
+    }
+    .chat-header {
+      background: var(--primary);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chat-status {
+      width: 8px; height: 8px; background: #4caf50;
+      border-radius: 50%; display: inline-block;
+    }
+    #chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--chat-bg);
+    }
+    .chat-msg {
+      background: #fff;
+      border-radius: 8px;
+      padding: 7px 10px;
+      font-size: 0.83rem;
+      border: 1px solid var(--border);
+    }
+    .chat-msg .chat-msg-author { font-weight: 600; color: var(--accent); font-size: 0.78rem; }
+    .chat-msg .chat-msg-time   { color: var(--muted); font-size: 0.72rem; float: right; }
+    .chat-msg .chat-msg-text   { margin-top: 3px; }
+
+    /* placeholder si pas connecté */
+    #chat-placeholder {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.83rem;
+      margin: auto;
+    }
+
+    .chat-footer {
+      padding: 10px;
+      border-top: 1.5px solid var(--border);
+      display: flex;
+      gap: 6px;
+    }
+    #chat-input {
+      flex: 1;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      padding: 7px 12px;
+      font-size: 0.85rem;
+    }
+    #chat-input:focus { outline: none; border-color: var(--accent); }
+    #btn-chat-send {
+      background: var(--accent); color: #fff; border: none;
+      border-radius: 8px; padding: 7px 14px; font-size: 0.9rem;
+      cursor: pointer; transition: opacity .2s;
+    }
+    #btn-chat-send:hover { opacity: 0.85; }
+
+    /* ── SPINNER ── */
+    #loading-spinner {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      color: var(--muted);
+    }
+
+    /* ── ERROR BANNER ── */
+    #error-banner {
+      display: none;
+      background: #ffeaea;
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+  </style>
 </head>
+
 <body>
-    
+
+  <!-- ═══════════════ NAVBAR ═══════════════ -->
+  <nav class="navbar">
+    <div class="d-flex align-items-center justify-content-between w-100">
+      <span class="navbar-brand"><i class="bi bi-chat-square-dots me-2"></i>CIR<span>Forum</span></span>
+
+      <!-- Etat non connecté -->
+      <div id="nav-logged-out">
+        <button id="btn-show-login" data-bs-toggle="modal" data-bs-target="#loginModal">
+          <i class="bi bi-person me-1"></i>Connexion
+        </button>
+      </div>
+
+      <!-- Etat connecté (masqué par défaut) -->
+      <div id="nav-user-info" class="d-none">
+        <i class="bi bi-person-check me-1"></i>
+        Connecté en tant que <strong id="nav-username"></strong>
+        <button id="btn-logout">Se déconnecter</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ MODAL LOGIN ═══════════════ -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel"><i class="bi bi-lock me-2"></i>Connexion</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div id="login-error" class="alert alert-danger d-none" role="alert"></div>
+          <div class="mb-3">
+            <label for="login-username" class="form-label fw-500">Login</label>
+            <input type="text" id="login-username" class="form-control" placeholder="Votre identifiant" />
+          </div>
+          <div class="mb-3">
+            <label for="login-password" class="form-label">Mot de passe</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" />
+          </div>
+          <div class="d-grid">
+            <button id="btn-login-submit" class="btn-accent btn">Se connecter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ MAIN GRID ═══════════════ -->
+  <div class="main-grid">
+
+    <!-- ── COLONNE GAUCHE : Forum ── -->
+    <div>
+
+      <!-- Bannière d'erreur -->
+      <div id="error-banner">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span id="error-message">Une erreur est survenue.</span>
+      </div>
+
+      <!-- Titre + bouton nouveau sujet -->
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <div class="section-title mb-0">
+          <i class="bi bi-list-ul text-danger"></i> Sujets
+        </div>
+        <!-- Visible uniquement si connecté — sera géré en JS (S3/S5) -->
+        <button id="btn-new-topic" class="d-none">
+          <i class="bi bi-plus-lg"></i> Nouveau sujet
+        </button>
+      </div>
+
+      <!-- Formulaire nouveau sujet — masqué par défaut (CDC S1) -->
+      <div id="form-new-topic">
+        <h6><i class="bi bi-pencil me-1"></i>Créer un nouveau sujet</h6>
+        <div class="mb-2">
+          <label for="new-topic-title" class="form-label small">Titre</label>
+          <input type="text" id="new-topic-title" class="form-control" placeholder="Titre du sujet" />
+        </div>
+        <div class="mb-3">
+          <label for="new-topic-content" class="form-label small">Contenu</label>
+          <textarea id="new-topic-content" class="form-control" rows="3" placeholder="Décrivez votre sujet..."></textarea>
+        </div>
+        <div class="d-flex gap-2">
+          <button id="btn-submit-topic" class="btn-accent btn btn-sm">Publier</button>
+          <button id="btn-cancel-topic" class="btn btn-sm btn-outline-secondary">Annuler</button>
+        </div>
+      </div>
+
+      <!-- Spinner chargement -->
+      <div id="loading-spinner">
+        <div class="spinner-border spinner-border-sm text-danger me-2" role="status"></div>
+        Chargement des sujets…
+      </div>
+
+      <!-- Liste des sujets — sera peuplée dynamiquement en S2 -->
+      <div id="topics-list">
+        <!-- Exemple statique pour S1 (sera remplacé par AJAX en S2) -->
+        <div class="topic-card" onclick="showTopicDetail(1)">
+          <h6>Bienvenue sur CIRForum !</h6>
+          <div class="meta">
+            <span><i class="bi bi-person-fill"></i> admin</span>
+            <span><i class="bi bi-clock"></i> 2025-01-01</span>
+            <span><i class="bi bi-chat-dots"></i> 3 réponses</span>
+          </div>
+        </div>
+        <div class="topic-card" onclick="showTopicDetail(2)">
+          <h6>Questions sur le projet PHP</h6>
+          <div class="meta">
+            <span><i class="bi bi-person-fill"></i> alice</span>
+            <span><i class="bi bi-clock"></i> 2025-01-02</span>
+            <span><i class="bi bi-chat-dots"></i> 1 réponse</span>
+          </div>
+        </div>
+        <div class="topic-card" onclick="showTopicDetail(3)">
+          <h6>Ressources Bootstrap utiles</h6>
+          <div class="meta">
+            <span><i class="bi bi-person-fill"></i> bob</span>
+            <span><i class="bi bi-clock"></i> 2025-01-03</span>
+            <span><i class="bi bi-chat-dots"></i> 2 réponses</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Détail d'un sujet + réponses — masqué par défaut -->
+      <div id="topic-detail">
+        <h5 id="detail-title">Titre du sujet</h5>
+        <div class="topic-meta">
+          <i class="bi bi-person-fill me-1"></i><span id="detail-author"></span>
+          &nbsp;·&nbsp;
+          <i class="bi bi-clock me-1"></i><span id="detail-date"></span>
+        </div>
+        <p class="topic-body" id="detail-content"></p>
+
+        <hr />
+
+        <!-- Réponses -->
+        <div id="replies-section">
+          <div class="section-title" style="font-size:0.9rem;">
+            <i class="bi bi-chat-left-dots"></i> Réponses
+          </div>
+          <div id="replies-list">
+            <!-- Rempli dynamiquement -->
+          </div>
+        </div>
+
+        <!-- Formulaire réponse (visible si connecté) -->
+        <div id="form-reply">
+          <textarea id="reply-content" class="form-control mb-2" rows="2" placeholder="Votre réponse…"></textarea>
+          <button id="btn-submit-reply" class="btn-accent btn btn-sm">Répondre</button>
+        </div>
+        <p id="reply-login-hint" class="text-muted small mt-2">
+          <i class="bi bi-info-circle me-1"></i>Connectez-vous pour répondre.
+        </p>
+      </div>
+
+    </div><!-- fin colonne gauche -->
+
+    <!-- ── COLONNE DROITE : Chat ── -->
+    <div>
+      <div class="chat-panel">
+        <div class="chat-header">
+          <span class="chat-status"></span>
+          Chat en temps réel
+        </div>
+
+        <div id="chat-messages">
+          <!-- Placeholder si non connecté -->
+          <div id="chat-placeholder">
+            <i class="bi bi-lock" style="font-size:1.5rem; display:block; margin-bottom:6px;"></i>
+            Connectez-vous pour accéder au chat
+          </div>
+        </div>
+
+        <div class="chat-footer">
+          <input type="text" id="chat-input" placeholder="Votre message…" disabled />
+          <button id="btn-chat-send" disabled><i class="bi bi-send"></i></button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- fin main-grid -->
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- JS principal -->
+  <script src="js/app.js"></script>
+
 </body>
 </html>
