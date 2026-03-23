@@ -19,7 +19,6 @@
       min-height: 100vh;
     }
 
-    /* ── NAVBAR ── */
     .navbar {
       background: var(--primary);
       padding: 0.9rem 1.5rem;
@@ -51,7 +50,7 @@
       text-decoration: underline; padding: 0; cursor: pointer; margin-left: 8px;
     }
 
-    /* ── LOGIN MODAL ── */
+    
     .modal-content { border-radius: var(--radius); border: none; }
     .modal-header { background: var(--primary); color: #fff; border-radius: var(--radius) var(--radius) 0 0; }
     .modal-title { font-family: 'Syne', sans-serif; }
@@ -63,7 +62,6 @@
     }
     .btn-accent:hover { opacity: 0.85; color: #fff; }
 
-    /* ── LAYOUT ── */
     .main-grid {
       display: grid;
       grid-template-columns: 1fr 320px;
@@ -76,7 +74,7 @@
       .main-grid { grid-template-columns: 1fr; }
     }
 
-    /* ── LEFT COLUMN ── */
+   
     .section-title {
       font-family: 'Syne', sans-serif;
       font-size: 1.1rem;
@@ -94,7 +92,7 @@
       background: var(--border);
     }
 
-    /* ── TOPIC LIST ── */
+   
     #topics-list { display: flex; flex-direction: column; gap: 10px; }
 
     .topic-card {
@@ -126,7 +124,7 @@
     }
     .topic-card .meta i { color: var(--accent); }
 
-    /* ── BTN NEW TOPIC ── */
+ 
     #btn-new-topic {
       background: var(--accent); color: #fff; border: none;
       border-radius: 8px; padding: 8px 18px; font-size: 0.9rem;
@@ -136,14 +134,14 @@
     }
     #btn-new-topic:hover { opacity: 0.85; }
 
-    /* ── FORM NEW TOPIC ── */
+    
     #form-new-topic {
       background: var(--card);
       border: 1.5px solid var(--border);
       border-radius: var(--radius);
       padding: 16px;
       margin-bottom: 1.2rem;
-      display: none;                 /* masqué par défaut — CDC S1 */
+      display: none;                 
     }
     #form-new-topic h6 {
       font-family: 'Syne', sans-serif;
@@ -160,7 +158,7 @@
       box-shadow: 0 0 0 3px rgba(233,69,96,.12);
     }
 
-    /* ── TOPIC DETAIL ── */
+    
     #topic-detail {
       background: var(--card);
       border: 1.5px solid var(--border);
@@ -177,7 +175,7 @@
     #topic-detail .topic-meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 12px; }
     #topic-detail .topic-body { font-size: 0.92rem; line-height: 1.65; color: #333; }
 
-    /* ── REPLIES ── */
+   
     #replies-section { margin-top: 1rem; }
     #replies-section .reply-item {
       border-left: 3px solid var(--border);
@@ -191,13 +189,13 @@
       font-weight: 600; font-size: 0.8rem; color: var(--accent); margin-bottom: 3px;
     }
 
-    /* ── FORM REPLY ── */
+    
     #form-reply {
       margin-top: 12px;
       display: none;
     }
 
-    /* ── CHAT ── */
+   
     .chat-panel {
       background: var(--card);
       border: 1.5px solid var(--border);
@@ -243,7 +241,7 @@
     .chat-msg .chat-msg-time   { color: var(--muted); font-size: 0.72rem; float: right; }
     .chat-msg .chat-msg-text   { margin-top: 3px; }
 
-    /* placeholder si pas connecté */
+   
     #chat-placeholder {
       text-align: center;
       color: var(--muted);
@@ -272,7 +270,6 @@
     }
     #btn-chat-send:hover { opacity: 0.85; }
 
-    /* ── SPINNER ── */
     #loading-spinner {
       display: none;
       text-align: center;
@@ -280,7 +277,7 @@
       color: var(--muted);
     }
 
-    /* ── ERROR BANNER ── */
+  
     #error-banner {
       display: none;
       background: #ffeaea;
