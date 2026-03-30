@@ -1,14 +1,8 @@
 "use strict";
 
-// ─────────────────────────────────────────────
-//  CIRForum — main.js
-// ─────────────────────────────────────────────
-
-// Token OAuth2 — rempli après connexion (S5)
 let authToken = null;
 let currentUser = null;
 
-// ─── Connexion ────────────────────────────────
 document
   .getElementById("btn-login-submit")
   .addEventListener("click", async () => {
@@ -22,7 +16,6 @@ document
       return;
     }
 
-    // Encodage Base64 pour le header Authorization Basic
     const credentials = btoa(login + ":" + password);
 
     try {
@@ -48,17 +41,14 @@ document
 
       const data = await response.json();
 
-      // Stocker le token en variable globale (jamais dans le HTML)
       authToken = data.token;
       currentUser = login;
 
-      // Fermer le modal
       const modal = bootstrap.Modal.getInstance(
         document.getElementById("loginModal"),
       );
       modal.hide();
 
-      // Mettre à jour l'interface
       errorDiv.classList.add("d-none");
       document.getElementById("login-username").value = "";
       document.getElementById("login-password").value = "";
@@ -77,7 +67,6 @@ document
     }
   });
 
-// ─── Déconnexion ──────────────────────────────
 document.getElementById("btn-logout").addEventListener("click", () => {
   authToken = null;
   currentUser = null;
@@ -90,7 +79,6 @@ document.getElementById("btn-logout").addEventListener("click", () => {
   document.getElementById("chat-placeholder").style.display = "block";
 });
 
-// ─── Nouveau sujet ────────────────────────────
 document.getElementById("btn-new-topic").addEventListener("click", () => {
   const form = document.getElementById("form-new-topic");
   form.style.display = form.style.display === "none" ? "block" : "none";
@@ -100,7 +88,6 @@ document.getElementById("btn-cancel-topic").addEventListener("click", () => {
   document.getElementById("form-new-topic").style.display = "none";
 });
 
-// ─── Chat WebSocket (S4) ──────────────────────
 document
   .getElementById("btn-chat-send")
   .addEventListener("click", sendChatMessage);
@@ -109,6 +96,5 @@ document.getElementById("chat-input").addEventListener("keydown", (e) => {
 });
 
 function sendChatMessage() {
-  // TODO S4 : envoyer via WebSocket (js/chat.js)
   console.log("WebSocket à implémenter en S4");
 }
