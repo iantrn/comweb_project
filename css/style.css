@@ -371,8 +371,3 @@ body {
   font-size: 0.85rem;
   margin-bottom: 1rem;
 }
-#btn-show-login:hover {
-  background: transparent !important;
-  border-color: var(--accent);
-  color: var(--accent) !important;
-}
