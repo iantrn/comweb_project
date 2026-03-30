@@ -13,3 +13,24 @@ function dbConnect() {
         exit();
     }
 }
+
+<?php
+require_once 'db.php';
+
+function dbRequestTopics($db) {
+    $stmt = $db->prepare('SELECT * FROM topics ORDER BY created_at DESC');
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function dbRequestTopic($db, $id) {
+    $stmt = $db->prepare('SELECT * FROM topics WHERE id = :id');
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+function dbRequestReplies($db, $topicId) {
+    $stmt = $db->prepare('SELECT * FROM replies WHERE topicId = :topicId ORDER BY created_at ASC');
+    $stmt->execute([':topicId' => $topicId]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
