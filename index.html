@@ -3,262 +3,156 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CIR Forum</title>
+    <title>Forum CIR2</title>
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700&family=DM+Sans:wght@400;500&display=swap"
-      rel="stylesheet"
-    />
-    <link href="css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css" />
   </head>
-
   <body>
-    <nav class="navbar">
-      <div class="d-flex align-items-center justify-content-between w-100">
-        <span class="navbar-brand"
-          ><i class="bi bi-chat-square-dots me-2"></i>CIR<span
-            >Forum</span
-          ></span
-        >
-
-        <div id="nav-logged-out">
-          <button
-            id="btn-show-login"
-            data-bs-toggle="modal"
-            data-bs-target="#loginModal"
-          >
-            <i class="bi bi-person me-1"></i>Connexion
+    <!-- Navigation -->
+    <nav class="navbar navbar-dark bg-dark mb-3">
+      <div class="container-fluid">
+        <span class="navbar-brand">Forum CIR2</span>
+        <div id="authZone">
+          <button id="btnShowLogin" class="btn btn-outline-light btn-sm">
+            Connexion
           </button>
-        </div>
-
-        <div id="nav-user-info" class="d-none">
-          <i class="bi bi-person-check me-1"></i>
-          Connecté en tant que <strong id="nav-username"></strong>
-          <button id="btn-logout">Se déconnecter</button>
+          <span id="userInfo" class="text-light d-none">
+            Connecté : <span id="currentUser"></span>
+            <button id="btnLogout" class="btn btn-outline-light btn-sm ms-2">
+              Déconnexion
+            </button>
+          </span>
         </div>
       </div>
     </nav>
 
-    <div
-      class="modal fade"
-      id="loginModal"
-      tabindex="-1"
-      aria-labelledby="loginModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="loginModalLabel">
-              <i class="bi bi-lock me-2"></i>Connexion
-            </h5>
-            <button
-              type="button"
-              class="btn-close btn-close-white"
-              data-bs-dismiss="modal"
-              aria-label="Fermer"
-            ></button>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Colonne gauche : liste des sujets -->
+        <div class="col-md-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4>Sujets</h4>
+            <button id="btnShowAddTopic" class="btn btn-success btn-sm d-none">
+              + Nouveau
+            </button>
           </div>
-          <div class="modal-body p-4">
-            <div
-              id="login-error"
-              class="alert alert-danger d-none"
-              role="alert"
-            ></div>
-            <div class="mb-3">
-              <label for="login-username" class="form-label fw-500"
-                >Login</label
-              >
+
+          <!-- Formulaire ajout sujet (caché par défaut) -->
+          <div id="formAddTopic" class="card mb-3 d-none">
+            <div class="card-body">
               <input
                 type="text"
-                id="login-username"
-                class="form-control"
-                placeholder="Votre identifiant"
+                id="topicTitle"
+                class="form-control mb-2"
+                placeholder="Titre"
               />
+              <textarea
+                id="topicContent"
+                class="form-control mb-2"
+                placeholder="Contenu"
+              ></textarea>
+              <button id="btnAddTopic" class="btn btn-primary btn-sm">
+                Publier
+              </button>
+              <button id="btnCancelTopic" class="btn btn-secondary btn-sm">
+                Annuler
+              </button>
             </div>
-            <div class="mb-3">
-              <label for="login-password" class="form-label"
-                >Mot de passe</label
-              >
-              <input
-                type="password"
-                id="login-password"
-                class="form-control"
-                placeholder="••••••••"
-              />
-            </div>
-            <div class="d-grid">
-              <button id="btn-login-submit" class="btn-accent">
-                Se connecter
+          </div>
+
+          <div id="topicsList"></div>
+        </div>
+
+        <!-- Colonne centre : détail sujet + réponses -->
+        <div class="col-md-5">
+          <h4>Discussion</h4>
+          <div id="topicDetail" class="text-muted">Sélectionnez un sujet…</div>
+          <div id="repliesList" class="mt-3"></div>
+
+          <!-- Formulaire ajout réponse -->
+          <div id="formAddReply" class="card mt-3 d-none">
+            <div class="card-body">
+              <textarea
+                id="replyContent"
+                class="form-control mb-2"
+                placeholder="Votre réponse"
+              ></textarea>
+              <button id="btnAddReply" class="btn btn-primary btn-sm">
+                Répondre
               </button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div class="main-grid">
-      <div>
-        <div id="error-banner">
-          <i class="bi bi-exclamation-triangle me-2"></i>
-          <span id="error-message">Une erreur est survenue.</span>
-        </div>
-
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <div class="section-title mb-0">
-            <i class="bi bi-list-ul text-danger"></i> Sujets
-          </div>
-
-          <button id="btn-new-topic" class="d-none">
-            <i class="bi bi-plus-lg"></i> Nouveau sujet
-          </button>
-        </div>
-
-        <div id="form-new-topic">
-          <h6><i class="bi bi-pencil me-1"></i>Créer un nouveau sujet</h6>
-          <div class="mb-2">
-            <label for="new-topic-title" class="form-label small">Titre</label>
-            <input
-              type="text"
-              id="new-topic-title"
-              class="form-control"
-              placeholder="Titre du sujet"
-            />
-          </div>
-          <div class="mb-3">
-            <label for="new-topic-content" class="form-label small"
-              >Contenu</label
-            >
-            <textarea
-              id="new-topic-content"
-              class="form-control"
-              rows="3"
-              placeholder="Décrivez votre sujet..."
-            ></textarea>
-          </div>
-          <div class="d-flex gap-2">
-            <button id="btn-submit-topic" class="btn-accent btn btn-sm">
-              Publier
-            </button>
-            <button
-              id="btn-cancel-topic"
-              class="btn btn-sm btn-outline-secondary"
-            >
-              Annuler
-            </button>
-          </div>
-        </div>
-
-        <div id="loading-spinner">
+        <!-- Colonne droite : chat WebSocket -->
+        <div class="col-md-3">
+          <h4>Chat global</h4>
           <div
-            class="spinner-border spinner-border-sm text-danger me-2"
-            role="status"
+            id="chatBox"
+            class="border rounded p-2 mb-2 bg-light"
+            style="height: 400px; overflow-y: auto"
           ></div>
-          Chargement des sujets…
-        </div>
-
-        <div id="topics-list">
-          <div class="topic-card" onclick="showTopicDetail(1)">
-            <h6>Bienvenue sur CIRForum !</h6>
-            <div class="meta">
-              <span><i class="bi bi-person-fill"></i> admin</span>
-              <span><i class="bi bi-clock"></i> 2025-01-01</span>
-              <span><i class="bi bi-chat-dots"></i> 3 réponses</span>
-            </div>
-          </div>
-          <div class="topic-card" onclick="showTopicDetail(2)">
-            <h6>Questions sur le projet PHP</h6>
-            <div class="meta">
-              <span><i class="bi bi-person-fill"></i> alice</span>
-              <span><i class="bi bi-clock"></i> 2025-01-02</span>
-              <span><i class="bi bi-chat-dots"></i> 1 réponse</span>
-            </div>
-          </div>
-          <div class="topic-card" onclick="showTopicDetail(3)">
-            <h6>Ressources Bootstrap utiles</h6>
-            <div class="meta">
-              <span><i class="bi bi-person-fill"></i> bob</span>
-              <span><i class="bi bi-clock"></i> 2025-01-03</span>
-              <span><i class="bi bi-chat-dots"></i> 2 réponses</span>
-            </div>
-          </div>
-        </div>
-
-        <div id="topic-detail">
-          <h5 id="detail-title">Titre du sujet</h5>
-          <div class="topic-meta">
-            <i class="bi bi-person-fill me-1"></i
-            ><span id="detail-author"></span>
-            &nbsp;·&nbsp;
-            <i class="bi bi-clock me-1"></i><span id="detail-date"></span>
-          </div>
-          <p class="topic-body" id="detail-content"></p>
-
-          <hr />
-
-          <div id="replies-section">
-            <div class="section-title" style="font-size: 0.9rem">
-              <i class="bi bi-chat-left-dots"></i> Réponses
-            </div>
-            <div id="replies-list"></div>
-          </div>
-
-          <div id="form-reply">
-            <textarea
-              id="reply-content"
-              class="form-control mb-2"
-              rows="2"
-              placeholder="Votre réponse…"
-            ></textarea>
-            <button id="btn-submit-reply" class="btn-accent btn btn-sm">
-              Répondre
-            </button>
-          </div>
-          <p id="reply-login-hint" class="text-muted small mt-2">
-            <i class="bi bi-info-circle me-1"></i>Connectez-vous pour répondre.
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <div class="chat-panel">
-          <div class="chat-header">
-            <span class="chat-status"></span>
-            Chat en temps réel
-          </div>
-
-          <div id="chat-messages">
-            <div id="chat-placeholder">
-              <i
-                class="bi bi-lock"
-                style="font-size: 1.5rem; display: block; margin-bottom: 6px"
-              ></i>
-              Connectez-vous pour accéder au chat
-            </div>
-          </div>
-
-          <div class="chat-footer">
+          <div class="input-group">
             <input
               type="text"
-              id="chat-input"
-              placeholder="Votre message…"
-              disabled
+              id="chatInput"
+              class="form-control"
+              placeholder="Message…"
             />
-            <button id="btn-chat-send" disabled>
-              <i class="bi bi-send"></i>
+            <button id="btnSendChat" class="btn btn-primary">Envoyer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de connexion -->
+    <div id="loginModal" class="modal fade" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Connexion</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input
+              type="text"
+              id="loginUser"
+              class="form-control mb-2"
+              placeholder="Login"
+            />
+            <input
+              type="password"
+              id="loginPass"
+              class="form-control"
+              placeholder="Mot de passe"
+            />
+            <div id="loginError" class="text-danger mt-2"></div>
+          </div>
+          <div class="modal-footer">
+            <button id="btnDoLogin" class="btn btn-primary">
+              Se connecter
             </button>
           </div>
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/main.js"></script>
+
+    <!-- Zone messages d'erreur -->
+    <div
+      id="errorZone"
+      class="position-fixed bottom-0 end-0 p-3"
+      style="z-index: 1080"
+    ></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/chat.js"></script>
   </body>
 </html>
