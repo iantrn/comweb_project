@@ -1,12 +1,3 @@
-#!/home/napoleon/.PythonEnvs/CommunicationsWeb/bin/python3
-###
-# \\Author: Thibault Napoléon "Imothep"
-# \\Company: ISEN Ouest
-# \\Email: thibault.napoleon@isen-ouest.yncrea.fr
-# \\Created Date: 14-May-2020 - 15:49:13
-# \\Last Modified: 29-Apr-2025 - 09:17:32
-###
-
 """CIR chat server using websockets."""
 import asyncio
 import websockets
@@ -16,7 +7,6 @@ import argparse
 
 def checkArguments():
     """Check program arguments and return program parameters."""
-    # Parse options.
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', '--ip', default='localhost',
                         help='websockets server host / ip')
@@ -31,7 +21,6 @@ async def clientHandler(websocket):
     """Client Handler."""
     clients.add(websocket)
 
-    # Wait message until client close connection.
     if args.verbose:
         print(str(websocket.remote_address) + ' open connection')
     while True:
@@ -43,7 +32,6 @@ async def clientHandler(websocket):
             for client in clients:
                 await client.send(message)
 
-        # Connection closed.
         except websockets.ConnectionClosed:
             clients.remove(websocket)
             if args.verbose:
@@ -58,7 +46,6 @@ async def main():
         await server.serve_forever()
 
 
-# Entry point of the program.
 clients = set()
 args = checkArguments()
 if args.ip == 'localhost':

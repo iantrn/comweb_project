@@ -1,19 +1,11 @@
 "use strict";
 
-// ============================================================
-// app.js - Frontend Forum CIR2
-// Gère : liste des sujets, détail, CRUD, authentification OAuth2
-// ============================================================
-
 const API_BASE = "php/request.php";
 
 let currentTopicId = null;
 let authToken = null;
 let currentLogin = null;
 
-// ============================================================
-// LECTURE - Liste des sujets
-// ============================================================
 
 async function requestTopics() {
   try {
@@ -57,9 +49,6 @@ function displayTopics(topics) {
   });
 }
 
-// ============================================================
-// LECTURE - Détail d'un sujet
-// ============================================================
 
 async function loadTopicDetail(id) {
   currentTopicId = id;
@@ -92,9 +81,6 @@ function displayTopicDetail(topic) {
     `;
 }
 
-// ============================================================
-// LECTURE - Réponses
-// ============================================================
 
 async function requestReplies(topicId) {
   try {
@@ -127,10 +113,6 @@ function displayReplies(replies) {
   });
   updateAuthUI();
 }
-
-// ============================================================
-// CRUD - Sujets
-// ============================================================
 
 document.getElementById("btnShowAddTopic").addEventListener("click", () => {
   document.getElementById("formAddTopic").classList.remove("d-none");
@@ -218,9 +200,7 @@ async function deleteTopic(id) {
   }
 }
 
-// ============================================================
-// CRUD - Réponses
-// ============================================================
+
 
 document.getElementById("btnAddReply").addEventListener("click", async (e) => {
   if (!currentTopicId) return;
@@ -289,9 +269,7 @@ async function deleteReply(id) {
   }
 }
 
-// ============================================================
-// AUTHENTIFICATION OAuth2
-// ============================================================
+
 
 document.getElementById("btnShowLogin").addEventListener("click", () => {
   const modal = new bootstrap.Modal(document.getElementById("loginModal"));
@@ -308,7 +286,6 @@ document.getElementById("btnDoLogin").addEventListener("click", async (e) => {
   }
   btn.disabled = true;
   try {
-    // OAuth2 Basic : login:password en base64 dans le header Authorization
     const credentials = btoa(login + ":" + pass);
     const response = await fetch(API_BASE + "/login/", {
       method: "POST",
@@ -344,14 +321,11 @@ document.getElementById("btnLogout").addEventListener("click", () => {
   updateAuthUI();
 });
 
-// Connexion via touche Entrée dans le modal
 document.getElementById("loginPass").addEventListener("keypress", (e) => {
   if (e.key === "Enter") document.getElementById("btnDoLogin").click();
 });
 
-// ============================================================
-// MISE À JOUR DE L'INTERFACE selon état de connexion
-// ============================================================
+
 
 function updateAuthUI() {
   const loggedIn = authToken !== null;
@@ -367,20 +341,16 @@ function updateAuthUI() {
     .getElementById("formAddReply")
     .classList.toggle("d-none", !loggedIn || !currentTopicId);
 
-  // Afficher/cacher les boutons modifier/supprimer
   document.querySelectorAll("#topicActions, .reply-actions").forEach((el) => {
     el.classList.toggle("d-none", !loggedIn);
   });
 
-  // Si déconnexion, fermer le formulaire ajout sujet
   if (!loggedIn) {
     document.getElementById("formAddTopic").classList.add("d-none");
   }
 }
 
-// ============================================================
-// UTILITAIRES
-// ============================================================
+
 
 function buildHeaders() {
   const headers = { "Content-Type": "application/json" };
@@ -406,9 +376,6 @@ function showError(message) {
   setTimeout(() => toast.remove(), 5000);
 }
 
-// ============================================================
-// INITIALISATION
-// ============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
   requestTopics();
